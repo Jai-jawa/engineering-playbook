@@ -1,0 +1,157 @@
+# SMPP Gateway
+
+Multi-tenant SMS aggregation platform. Tier 3 architecture from day one, operating at Tier 2 cost.
+
+## Project Goal
+
+Build a production-grade SMPP gateway that aggregates upstream SMS providers (Tier 1 telcos and Tier 2 aggregators) and exposes a clean HTTP API + SMPP interface to downstream clients. Start as a Tier 2 reseller, graduate to Tier 3 with direct telco connections.
+
+## Business Model
+
+### Positioning
+
+- **What we are:** SMS aggregator providing reliable, cost-optimized message delivery
+- **Who we serve:** Enterprises, SaaS platforms, and resellers who need programmatic SMS
+- **How we earn:** Per-SMS margin between upstream cost and client rate
+
+### Why This Model First
+
+- Low barrier to entry — no telco relationship needed on day one
+- Revenue from month one via reseller margin
+- Proves technology and operational capability before approaching telcos
+- Client base becomes leverage for direct telco negotiation
+
+### Long-Term Direction
+
+Tier 2 (reseller) → Tier 2.5 (operational maturity) → Tier 3 (direct telco) → hybrid model with both direct and aggregated routes for coverage and redundancy.
+
+## Tier Progression
+
+| Phase | Tier | Focus | Timeline |
+|---|---|---|---|
+| A | Tier 2 Launch | Reseller operations, 2 upstream vendors, HTTP API | Month 1-3 |
+| B | Tier 2.5 Operational Maturity | Wallet billing, DLT compliance, routing intelligence | Month 3-6 |
+| C | Tier 3 Maturity | Direct telco connections, SMPP server, HA deployment | Month 6-12 |
+| D | Direct Telco Strategy | Telco partnerships, volume discounts, regional expansion | Month 12+ |
+
+## Tech Stack
+
+| Component | Technology | Why This Stack |
+|---|---|---|
+| API Server | FastAPI (Python) | Async-native, OpenAPI auto-docs, strong typing with Pydantic |
+| SMPP Engine | Jasmin SMS Gateway | Battle-tested open source, supports SMPP 3.4, routing built-in |
+| Database | PostgreSQL 15+ | ACID compliance for billing, partitioning for messages, JSONB for flexibility |
+| Cache / Queues | Redis + RabbitMQ | Redis for sessions/rate-limiting/DND cache; RabbitMQ for async dispatch and DLR processing |
+| Frontend | Next.js (React) | SSR for admin dashboard, API routes for BFF pattern |
+| Reverse Proxy | Nginx | TLS termination, rate limiting, static file serving |
+| Containers | Docker Compose → Kubernetes | Single-machine start, orchestration when scale demands it |
+
+## Investment Breakdown
+
+| Tier | Infrastructure | Development | Ongoing Ops |
+|---|---|---|---|
+| Tier 2 (Phase A) | Low (~$50-100/mo VPS) | 1 developer, 3 months | Minimal |
+| Tier 2.5 (Phase B) | Low-Medium | Same developer, +3 months | Monitoring setup |
+| Tier 3 (Phase C) | Medium ($200-500/mo) | May need DevOps support | Dedicated ops attention |
+| Direct Telco (Phase D) | High | Business development + engineering | Full ops team |
+
+## Key Stakeholders
+
+### Internal
+
+| Role | Responsibility |
+|---|---|
+| Founder / Product Owner | Business direction, telco relationships, pricing strategy |
+| Backend Developer | API, SMPP integration, billing logic, database |
+| Frontend Developer | Client portal, admin dashboard |
+| DevOps / Infrastructure | Docker, CI/CD, monitoring, scaling |
+| Compliance Officer | DLT registration, TRAI rules, consent management |
+| Support Lead | Client onboarding, issue resolution |
+| Finance | Rate card management, revenue reconciliation |
+| Sales / BD | Client acquisition, telco partnerships |
+
+### External
+
+| Party | Interaction |
+|---|---|
+| Upstream SMS Providers | SMPP/HTTP connections, rate negotiation, SLA management |
+| Telcos (future) | Direct connection agreements, number allocation |
+| TRAI / DOT | Regulatory compliance, telemarketer registration |
+| DLT Platform | Template registration, sender ID approval |
+| Clients (Enterprise) | API integration, billing, support |
+| Resellers | White-label access, sub-organization management |
+
+## User Personas
+
+### 1. Enterprise Client
+- Needs: Reliable SMS delivery, real-time DLR, simple API, usage dashboard
+- Pain points: Unreliable delivery, opaque pricing, poor DLR accuracy
+
+### 2. Reseller
+- Needs: Sub-org management, custom rate cards, white-label branding (later)
+- Pain points: No visibility into delivery, can't manage their own clients
+
+### 3. Platform Admin
+- Needs: Route management, connector health, financial oversight, client management
+- Pain points: Manual route switching, no circuit breaker, spreadsheet billing
+
+### 4. Operations / Support
+- Needs: Message trace, delivery reports, client issue debugging
+- Pain points: No end-to-end message tracking, fragmented logs
+
+## Revenue Model
+
+### Core Revenue
+- Per-SMS margin between upstream cost and client rate
+- Different margins by message class (transactional vs promotional vs OTP)
+
+### Billing Model
+- **Prepaid wallet** — clients top up before sending
+- **Immutable ledger** — every transaction recorded with balance_before/balance_after
+- **Rate cards** — per-org, per-route, per-message_class pricing
+
+### Additional Revenue (Later)
+1. Premium routes (faster delivery, higher reliability) at higher margin
+2. Dedicated sender IDs
+3. Bulk volume discounts (still profitable at scale)
+4. API analytics and reporting add-ons
+5. WhatsApp Business API (Phase 5+)
+6. Number lookup / HLR services
+7. Reseller platform fees
+
+## Product Scope
+
+### MVP (Phase 1-2)
+- Single-SMS and bulk HTTP API
+- JWT + API key authentication
+- Prepaid wallet with ledger
+- 2 upstream vendor connections
+- Basic routing (priority-based)
+- DLT template validation
+- DLR tracking and webhooks
+- Admin dashboard (routes, connectors, orgs, wallets)
+
+### Later (Phase 3-4)
+- Client-facing portal with reports
+- SMPP server interface for downstream
+- Scheduled messages
+- Advanced routing (cost-optimized, geo-based)
+- Circuit breaker auto-failover
+
+### Non-Goals for MVP
+- WhatsApp / RCS channels
+- White-label reseller portal
+- Direct telco connections
+- Multi-region deployment
+- Mobile app
+
+## Related Files
+
+| Document | Description |
+|---|---|
+| [Architecture](docs/architecture.md) | System design, patterns, data flows, security model |
+| [Database Schema](docs/database-schema.md) | Full SQL schema with 12 tables, indexes, transaction rules |
+| [API Specs](docs/api-specs.md) | Complete API contract with JSON examples |
+| [Infrastructure](docs/infrastructure.md) | Docker, deployment topology, CI/CD, monitoring |
+| [Compliance](docs/compliance.md) | DLT, TRAI, consent management, audit trail |
+| [Roadmap](docs/roadmap.md) | 6-phase implementation plan with go/no-go gates |
